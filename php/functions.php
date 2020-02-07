@@ -1,5 +1,7 @@
 <?php
 
+    function console_log($data) { $output = json_encode($data); echo "<script>console.log(" . $output . ");</script>"; }
+
     // Print form
 
     function printOptions($contents, $default, $item) {
@@ -15,22 +17,16 @@
         print("<option value=\"" . $default ."\">" . $default ."</option>");
      }
 
-     function printPlaceholder($name, $defaultName) {
-        if (isset($_POST["$name"])) {
-           if ($_POST["$name"] !== "") {
-              print($_POST["$name"]);
-              return ;
+     function printForm($contents, $default, $column, $label) {
+        print('<article class="section-article-form-article"><input list="' . $column . '" name="' . $column . '" placeholder="' . $label. '"');
+
+        if (isset($_POST["$column"])) {
+           if ($_POST["$column"] !== "") {
+              print(' value="' . $_POST["$column"] . '"');
            }
         }
-        print($defaultName);
-     }
-
-     function printForm($contents, $default, $column, $label) {
-        print('<article class="section-article-form-article"><input list="' . $column . '" name="' . $column . '" placeholder="');
-
-        printPlaceholder($column, $label);
         
-        print('"/><datalist id="' . $column . '">');
+        print('/><datalist id="' . $column . '">');
 
         printOptions($contents, $default, $column);
 
@@ -59,26 +55,27 @@
 
         print("</tr>");
      }
+     
+     function addCoordinates(&$localisations) {
+        fetchUrl_2($contents_2, $localisations);
 
-     function addCoordinates($localisations, $com_ins, $etablissement_lib) {
-        foreach ($localisations as $value) {
-            if ($value["etablissement_lib"] === $etablissement_lib) {
-               return ;
-            }
+        $result = array();
+
+        foreach ($contents_2["records"] as $localisation) {
+
+          $res = array(
+              "x" => $localisation["fields"]["coordonnees"][0],
+              "y" => $localisation["fields"]["coordonnees"][1],
+              "etablissement_lib" => $localisation["fields"]["uo_lib"],
+              "url" => $localisation["fields"]["url"],
+              "nbResults" => 1
+            );
+            
+            array_push($result, $res);
         }
 
-        $geolocalisation = json_decode(file_get_contents("https://geo.api.gouv.fr/communes/". $com_ins ."?fields=centre&format=json&geometry=centre"));
-        if (isset($geolocalisation->centre)) {
-           $localisation = array(
-              "x" => $geolocalisation->centre->coordinates[1],
-              "y" => $geolocalisation->centre->coordinates[0],
-              "etablissement_lib" => $etablissement_lib,
-           );
-           if ($localisation["x"] != null && $localisation["y"] != null) {
-              return $localisation;
-           }
-        }
-        return null;
+        return $result;
+
      }
 
      function printHeader($labels) {
@@ -97,7 +94,7 @@
         );
 
         $localisations = array();
-
+        
         foreach ($contents["records"] as $key => $value) {
            if (match($value["fields"], $default)) {
               if ($parameters["nbResults"] < $_POST["begin"]) {
@@ -105,23 +102,19 @@
               }
               if ($_POST["begin"] <= $parameters["nbResults"] && $parameters["nbResults"] < $_POST["end"]) {
                 printLine($value["fields"], $labels);
-                $coords = addCoordinates($localisations, $value["fields"]["com_ins"], $value["fields"]["etablissement_lib"]);
-               if ($coords != null) {
-                  array_push($localisations, $coords);
-               }
-               }
-              if ($_POST["end"] <= $parameters["nbResults"]) {
+                array_push($localisations, array(
+                  "etablissement_lib" => $value["fields"]["etablissement_lib"], 
+                  "com_ins" => $value["fields"]["com_ins"]
+                ));
+                //url
+              }
+              if ($_POST["end"] <= $parameters["nbResults"] && !($parameters["hasAfter"])) {
                 $parameters["hasAfter"] = true;
-                break;
               }
               $parameters["nbResults"]++;
            }                     
         }
         print("</table>");
-            
-        if ($parameters["nbResults"] == 0) {
-            print("<p>Aucun résultat ne correspond à vos critères de tri.");
-        }
 
         if ($parameters["hasBefore"] || $parameters["hasAfter"]) {
             print('<div style="display: flex; align-items: center; justify-content: center; margin-top: 15px;"><div style="display: flex; align-items: center; justify-content: space-around; width:30%;">');
@@ -131,6 +124,16 @@
                 printAfterButton($limit);
             print('</div></div>');
         }  
+
+        if ($parameters["nbResults"] <= 0) {
+            print('<p style="text-align: center;">Aucun résultat ne correspond à vos critères de tri.</p>');
+        } else {
+            $printElements = ($parameters["nbResults"] < intval($_POST["end"])) ? $parameters["nbResults"] : (intval(intval($_POST["end"])) - (intval($_POST["begin"])));
+            print('<p style="text-align: center;">'. $printElements . " / " . $parameters["nbResults"] . " résultats affichés </p>");
+
+            $localisations = addCoordinates($localisations);
+        }
+
         print("</article>");
 
         return $localisations;
@@ -147,7 +150,7 @@
               print('<input name="' . $key . '" value="' . $value . '" type="hidden"/>');
            }
         }
-        print('<input type="submit" value="Précédant" class="section-article-form-article-inputbutton"/></form>');
+        print('<input type="submit" value="Précédent" class="section-article-form-article-inputbutton"/></form>');
      }
 
      function printAfterButton($limit) {

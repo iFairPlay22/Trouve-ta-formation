@@ -13,6 +13,8 @@
          //+Intégration des liens cliqués
          require("php/import_data.php");
          require("php/functions.php");
+
+         fetchUrl_1($labels, $contents);
       ?>
 
       <header>
@@ -57,35 +59,41 @@
                   printHeader($labels);
             
                   $localisations = printResult($contents, $default, $labels, $limit);
+
                }
             }
-            ?>
+         ?>
       </section>
       <footer></footer>
-   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-      crossorigin=""></script>
-   <script>
+
+      <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+            crossorigin=""></script>
+      <script>
       //Setting initial coordinates
       var mymap = L.map('article-leatlet').setView([48.856614, 2.3522219], 5);
 
       //Adding map layer
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+         minZoom: 3,
          maxZoom: 18,
          id: 'mapbox.streets',
          accessToken: 'pk.eyJ1IjoibWFpYTIzIiwiYSI6ImNrMzV2dWlneTBicDMzY3FqNDRhcnNwZWkifQ.ZeUBSa9YEXLxt0BVV7okeA'
          }).addTo(mymap);
 
       document.getElementById("location-button").addEventListener("click", function() {
-         mymap.locate({setView: true, maxZoom: 13});
+         mymap.locate({setView: true});
       });
       
       <?php
+
+         
          foreach ($localisations as $localisation) {
-            print('L.marker([' . $localisation["x"] . ', ' . $localisation["y"] . ']).addTo(mymap).bindPopup("'. $localisation["etablissement_lib"] .'").openPopup();');
+            print('L.marker([' . $localisation["x"] . ', ' . $localisation["y"] . ']).addTo(mymap).bindPopup("<a href=\"' . $localisation["url"] . '\">' . $localisation["etablissement_lib"] . '</a>").openPopup();');
          }
       ?>
+      
    </script>
    </body>
 </html>
