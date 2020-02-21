@@ -20,7 +20,7 @@
 	     		foreach ($categoryData as $attribute => $label) {
 
 	     			if (substr($label, 0, 4) == "Lien") {
-	     				print("<p><a href=\"" . $contents["records"][0]["fields"][$attribute] . "\">" . $label . "</a></p>");
+	     				print("<p><a href=\"" . $contents["records"][0]["fields"][$attribute] . "\" target=\"_blank\">" . $label . "</a></p>");
 	     			} else {
 	     				print("<p>" . $label . " => " . $contents["records"][0]["fields"][$attribute] . "</p>");
 	     			}

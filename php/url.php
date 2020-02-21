@@ -26,9 +26,9 @@
 
 			for ($i=0; $i <= $length; $i++) { 
 				if ($i === $length) {
-					$url .= $uaiArray[$i]["com_ins"]; 
+					$url .= $uaiArray[$i]["etablissement"]; 
 				} else {
-					$url .= $uaiArray[$i]["com_ins"] . " OR uai="; 
+					$url .= $uaiArray[$i]["etablissement"] . " OR uai="; 
 				}
 			}
 
@@ -46,13 +46,11 @@
 		private static function fetchUrl($url, &$contents) {
 
 			$contents = file_get_contents($url);
-		
+
 			if($contents === false) {
 				print("API connection failed...");
 				exit(1);
 			}
-
-			JsManager::console_log($url);
 
 			$contents = json_decode($contents, true);
 		}
@@ -69,10 +67,10 @@
 	            "com_etab_lib" => "Ville"
 	         );
 
-			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1&facet=etablissement";
+			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($labels, $url);
-			$url = $url . "&refine.rentree_lib=2017-18";
+			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18";
 			self::fetchUrl($url, $contents);
 		}
 
@@ -120,14 +118,15 @@
 			$facets = array();
 			foreach ($labels as $category => $data) {
 				foreach ($data as $attribute => $label) {
-					array_push($attribute, $facets);
+					array_push($facets, $attribute);
 				}
 			}
 
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1&facet=etablissement";
 			$url = self::addApiKey($url);
-			$url = self::createUrl_facets($labels, $url);
-			$url = $url . "$q=" . $id ."&refine.rentree_lib=2017-18";
+			$url = self::createUrl_facets($facets, $url);
+
+			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&q=" . $id;
 			self::fetchUrl($url, $contents);
 		}
 

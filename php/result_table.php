@@ -30,8 +30,8 @@
 
 	        print("<td>
 	        	<form method=\"POST\">
-	        		<input name=\"id\" value=\"" . $line["etablissement"] . "\" type=\"hidden\"></input>
-	        		<input type=\"submit\" value=\"En savoir plus\"></input>
+	        		<input name=\"id\" value=\"" . $line["etablissement"] . "\" type=\"hidden\">
+	        		<input type=\"submit\" value=\"En savoir plus\">
 	        	</form>
 	        	</td>");
 
@@ -64,7 +64,7 @@
 	                self::printLine($value["fields"], $labels);
 	                array_push($localisations, array(
 	                  "etablissement_lib" => $value["fields"]["etablissement_lib"], 
-	                  "com_ins" => $value["fields"]["com_ins"]
+	                  "etablissement" => $value["fields"]["etablissement"]
 	                ));
 	              }
 	              if ($_POST["end"] <= $parameters["nbResults"] && !($parameters["hasAfter"])) {
