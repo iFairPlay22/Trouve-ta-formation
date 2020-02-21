@@ -1,13 +1,13 @@
+/* FONT */
+@font-face {
+    font-family: CaviarDreams;
+    src: url('fonts/CaviarDreams.ttf') format('opentype');
+}
 /* GENERAL */
  body {
      margin: 0;
      padding: 0;
-
-    /* Source: Pixabay (banque d'images libres de droits) Lien: https://pixabay.com/fr/photos/bureau-d-affaires-coll%C3%A8gues-r%C3%A9union-1209640/ 
-     background-image: url('assets/test.jpg');
-     background-repeat: no-repeat;
-     background-size: cover;
-     */
+     font-family: CaviarDreams, "Times New Roman", Times, serif;
 }
  .article-table {
      max-width: 1000px;
@@ -30,6 +30,7 @@
      font-size: 45px;
      text-align: center;
      margin: auto;
+     text-transform: uppercase;
 }
 /* SECTION */
  section {
@@ -67,13 +68,13 @@ article > select {
      height: 40px;
      width: 225px;
 }
- .section-article-form-article-button {
+.section-article-form-article-button {
      margin-top: 10px;
 }
 #location-button {
     margin-top: 5px;
-    }
- button, .section-article-form-article-inputbutton {
+}
+button, .section-article-form-article-inputbutton {
      color: white;
      background: #4C8FFB;
      border: 1px #3079ED solid;
@@ -82,9 +83,18 @@ article > select {
      font-weight: bold;
      font-size: 20px;
      outline: none;
+     font-family: CaviarDreams;
 }
 button:hover, .section-article-form-article-inputbutton:hover {
      opacity: 0.75;
+}
+.link {
+     color: white; 
+     text-decoration: none; 
+     text-transform: uppercase;
+}
+.p-padding {
+     padding-right: 25px;
 }
 #article-map {
     display: flex;
@@ -115,4 +125,8 @@ th, td {
      background-color: rgba(79, 158, 219, 0.7);
      position: relative;
      bottom: 0;
+     display: flex; 
+     flex-direction: row; 
+     justify-content: end; 
+     align-items: center;
 }

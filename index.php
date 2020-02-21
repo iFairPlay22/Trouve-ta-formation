@@ -11,10 +11,16 @@
    <body>
       <?php
          //+Intégration des liens cliqués
-         require("php/import_data.php");
-         require("php/functions.php");
+         $files = array("php/button.php", "php/form.php", "php/js_manager.php", "php/map.php", "php/result_table.php", "php/url.php", "php/etablissement_description.php");
+         foreach ($files as $file) {
+            require($file);
+         }
 
-         fetchUrl_1($labels, $contents);
+
+         $default = "Pas de spécifications";
+         $limit = 6;
+         
+         Url::fetchUrl_1($labels, $contents, -1);
       ?>
 
       <header>
@@ -36,7 +42,7 @@
                <input name="end" value ="<?php print($limit); ?>" hidden>
                <?php
                   foreach ($labels as $column => $label) {
-                     printForm($contents, $default, $column, $label);
+                     Form::printForm($contents, $default, $column, $label);
                   }
                ?>
 
@@ -56,44 +62,46 @@
             if (isset($_POST["begin"])) {
                if (isset($_POST["end"])) {
             
-                  printHeader($labels);
+                  ResultTable::printHeader($labels);
             
-                  $localisations = printResult($contents, $default, $labels, $limit);
+                  $localisations = ResultTable::printResult($contents, $default, $labels, $limit);
 
                }
+            } else if (isset($_POST["id"])) {
+               $localisations = EtablissementDescription::printResult($_POST["id"]);
             }
          ?>
       </section>
-      <footer></footer>
+      <footer>
+         <p class="p-padding">
+            <a href="https://github.com/iFairPlay22/Trouve-ta-formation" class="link">Pour en savoir plus</a>
+         </p>
+      </footer>
 
       <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
             integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
             crossorigin=""></script>
       <script>
-      //Setting initial coordinates
-      var mymap = L.map('article-leatlet').setView([48.856614, 2.3522219], 5);
+         //Setting initial coordinates
+         var mymap = L.map('article-leatlet').setView([48.856614, 2.3522219], 5);
 
-      //Adding map layer
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-         minZoom: 3,
-         maxZoom: 18,
-         id: 'mapbox.streets',
-         accessToken: 'pk.eyJ1IjoibWFpYTIzIiwiYSI6ImNrMzV2dWlneTBicDMzY3FqNDRhcnNwZWkifQ.ZeUBSa9YEXLxt0BVV7okeA'
-         }).addTo(mymap);
+         //Adding map layer
+         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            minZoom: 3,
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'pk.eyJ1IjoibWFpYTIzIiwiYSI6ImNrMzV2dWlneTBicDMzY3FqNDRhcnNwZWkifQ.ZeUBSa9YEXLxt0BVV7okeA'
+            }).addTo(mymap);
 
-      document.getElementById("location-button").addEventListener("click", function() {
-         mymap.locate({setView: true});
-      });
-      
-      <?php
-
+         document.getElementById("location-button").addEventListener("click", function() {
+            mymap.locate({setView: true});
+         });
          
-         foreach ($localisations as $localisation) {
-            print('L.marker([' . $localisation["x"] . ', ' . $localisation["y"] . ']).addTo(mymap).bindPopup("<a href=\"' . $localisation["url"] . '\">' . $localisation["etablissement_lib"] . '</a>").openPopup();');
-         }
-      ?>
-      
-   </script>
+         <?php
+            Map::addMapItems($localisations);
+         ?>
+         
+      </script>
    </body>
 </html>
