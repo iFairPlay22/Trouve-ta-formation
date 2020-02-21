@@ -10,11 +10,10 @@
    </head>
    <body>
       <?php
-         $files = array("php/button.php", "php/form.php", "php/js_manager.php", "php/map.php", "php/result_table.php", "php/url.php", "php/etablissement_description.php");
+         $files = array("php/button.php", "php/form.php", "php/js_manager.php", "php/map.php", "php/result_table.php", "php/url.php", "php/etablissement_description.php", "php/database_actions.php");
          foreach ($files as $file) {
             require($file);
          }
-
 
          $default = "Pas de spécifications";
          $limit = 6;
@@ -57,7 +56,6 @@
             </button>
          </article>
       </section>
-      <section>
          <?php
             $localisations = array();
             if (isset($_POST["begin"])) {
@@ -65,11 +63,15 @@
                   $localisations = ResultTable::printResult($contents, $default, $labels, $limit);
                }
             } else if (isset($_POST["id"])) {
+               $databaseActions = new DatabaseActions();
+               $clics = $databaseActions->addClick($_POST["id"]);
+
                $etablissementDescription = new EtablissementDescription();
                $localisations = $etablissementDescription->printResult($_POST["id"]);
+               
+               print("<article><h1 style=\"text-align: center;\">Cette page a été consultée $clics fois !</h1></article>");
             }
          ?>
-      </section>
       <footer>
          <p class="p-padding">
             <a href="https://github.com/iFairPlay22/Trouve-ta-formation" class="link">Pour en savoir plus</a>

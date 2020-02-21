@@ -31,7 +31,7 @@
 	        print("<td>
 	        	<form method=\"POST\">
 	        		<input name=\"id\" value=\"" . $line["etablissement"] . "\" type=\"hidden\">
-	        		<input type=\"submit\" value=\"En savoir plus\">
+	        		<input type=\"submit\" value=\"En savoir plus\" class=\"section-article-form-article-inputbutton\">
 	        	</form>
 	        	</td>");
 
