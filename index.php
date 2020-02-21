@@ -56,18 +56,17 @@
                Géolocaliser
             </button>
          </article>
+      </section>
+      <section>
          <?php
             $localisations = array();
             if (isset($_POST["begin"])) {
                if (isset($_POST["end"])) {
-            
-                  ResultTable::printHeader($labels);
-            
                   $localisations = ResultTable::printResult($contents, $default, $labels, $limit);
-
                }
             } else if (isset($_POST["id"])) {
-               $localisations = EtablissementDescription::printResult($_POST["id"]);
+               $etablissementDescription = new EtablissementDescription();
+               $localisations = $etablissementDescription->printResult($_POST["id"]);
             }
          ?>
       </section>
@@ -77,9 +76,11 @@
          </p>
       </footer>
 
-      <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-            crossorigin=""></script>
+      <script 
+         src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+         integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+         crossorigin="">
+      </script>
       <script>
          var mymap = L.map('article-leatlet').setView([48.856614, 2.3522219], 5);
 

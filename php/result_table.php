@@ -38,7 +38,7 @@
 	        print("</tr>");
 	     }
 
-	     public static function printHeader($labels) {
+	    private static function printHeader($labels) {
 	      print("<article><table><tr>");
 	        foreach ($labels as $column => $label) {
 	            print("<th>" . $label . "</th>");
@@ -47,6 +47,8 @@
 	     }
 
 		public static function printResult($contents, $default, $labels, $limit) {
+			self::printHeader($labels);
+
 	        $parameters = array(
 	            "nbResults" => 0,
 	            "hasBefore" => false,
@@ -63,7 +65,7 @@
 	              if ($_POST["begin"] <= $parameters["nbResults"] && $parameters["nbResults"] < $_POST["end"]) {
 	                self::printLine($value["fields"], $labels);
 	                array_push($localisations, array(
-	                  "etablissement_lib" => $value["fields"]["etablissement_lib"], 
+	                  //"etablissement_lib" => $value["fields"]["etablissement_lib"], 
 	                  "etablissement" => $value["fields"]["etablissement"]
 	                ));
 	              }

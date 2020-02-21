@@ -26,7 +26,7 @@
 
 			for ($i=0; $i <= $length; $i++) { 
 				if ($i === $length) {
-					$url .= $uaiArray[$i]["etablissement"]; 
+					$url .= $uaiArray[$i]["etablissement"];
 				} else {
 					$url .= $uaiArray[$i]["etablissement"] . " OR uai="; 
 				}
@@ -74,58 +74,50 @@
 			self::fetchUrl($url, $contents);
 		}
 
+		private static function getFacetsArray($categories) {
+			$facets = array();
+			foreach ($categories as $category => $data) {
+				foreach ($data as $attribute => $label) {
+					$facets[$attribute] = $label;
+				}
+			}
+			return $facets;
+		}
+
 		public static function fetchUrl_1_id(&$labels, &$contents, $id) {
 			$labels = array(
-				"La formation" => array(
-					"diplome_lib" => "Nom de formation",
-		            "niveau_lib" => "Niveau d'études",
-		            "dn_de_lib" => "Type de diplome",
-		            "etablissement_type2" => "Complément du type de diplome",
-		            "libelle_intitule_1" => "Nom du diplome"
-				),
-
-				"La discipline" => array(
-					"gd_disciscipline_lib" => "Nom de discipline",
-		            "discipline_lib" => "Descriptif de la discipline",
-		            "sect_disciplinaire_lib" => "Secteur de la dispcipline"
-				),
-
 				"L'établissement" => array(
 					"etablissement_lib" => "Nom de l'établissement",
 		            "etablissement_type_lib" => "Type d'établissement",
 		            "gd_disciscipline_lib" => "Domaine d'études",
 		            "sect_disciplinaire_lib" => "Secteur d'études"
+				),
 
+				"La discipline" => array(
+					"gd_disciscipline_lib" => "Nom de discipline",
+		            "discipline_lib" => "Détails sur la discipline",
+		            "sect_disciplinaire_lib" => "Secteur de la dispcipline"
+				),
+
+				"La formation" => array(
+					"diplome_lib" => "Nom de formation",
+		            "dn_de_lib" => "Type de diplome",
+					"libelle_intitule_1" => "Nom du diplome",
+					"niveau_lib" => "Niveau d'études"
 				),
 
 				"L'effectif" => array(
-					"femmes" => "Nombre de femmes",
-		            "hommes" => "Nombre d'hommes",
+					"femmes" => "Etudiantes",
+		            "hommes" => "Etudiants",
 		            "effectif_total" => "Effectif total"
-				),
-
-				"La localisation" => array(
-					"reg_etab_lib" => "Région",
-	            	"dep_ins_lib" => "Département",
-	            	"com_etab_lib" => "Ville"
-				),
-
-				"Informations complémentaires" => array(
-					"element_wikidata" => "Lien wikipédia"
 				)
 	         );
 
-			$facets = array();
-			foreach ($labels as $category => $data) {
-				foreach ($data as $attribute => $label) {
-					array_push($facets, $attribute);
-				}
-			}
+			$facets = self::getFacetsArray($labels);
 
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1&facet=etablissement";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($facets, $url);
-
 			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&q=" . $id;
 			self::fetchUrl($url, $contents);
 		}
@@ -138,13 +130,39 @@
 				"uo_lib" => "Description de l'établissement"
 			);
 
-			//q=uai=... OR uai=... OR uai=...
-
-			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-etablissements-enseignement-superieur";
+			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-etablissements-enseignement-superieur&rows=-1";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($labels_2, $url);
 			$url = self::createUrl_q($url, $uaiArray);
 			self::fetchUrl($url, $contents_2);
+		}
+
+		public static function fetchUrl_2_id(&$labels, &$contents, $id) {
+			$labels = array(
+				"La localisation" => array(
+					"pays_etranger_acheminement" => "Pays",
+					"reg_nom" => "Région",
+	            	"dep_nom" => "Département",
+	            	"com_nom" => "Commune",
+					"adresse_uai" => "Adresse",
+					"aca_nom" => "Académie",
+					"coordonnees" => "Géolocalisation"
+				),
+
+				"Informations complémentaires" => array(
+					"numero_telephone_uai" => "Numéro de téléphone",
+					"url" => "Lien du site officiel",
+					"element_wikidata" => "Lien wikipédia"
+				)
+	        );
+
+			$facets = self::getFacetsArray($labels);
+
+			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-etablissements-enseignement-superieur&rows=-1";
+			$url = self::addApiKey($url);
+			$url = self::createUrl_facets($facets, $url);
+			$url = $url . "&q=" . $id;
+			self::fetchUrl($url, $contents);
 		}
 	}
 ?>
