@@ -19,16 +19,16 @@
 			return $url;
 		}
 
-		private static function createUrl_q($url, $uaiArray) {
+		private static function createUrl_q($url, $dataArray, $name) {
 			
-			$length = count($uaiArray) - 1;
-			$url .= "&q=uai=";
+			$length = count($dataArray) - 1;
+			$url .= "&q=" . $name . "=";
 
 			for ($i=0; $i <= $length; $i++) { 
 				if ($i === $length) {
-					$url .= $uaiArray[$i]["etablissement"];
+					$url .= $dataArray[$i]["etablissement"];
 				} else {
-					$url .= $uaiArray[$i]["etablissement"] . " OR uai="; 
+					$url .= $dataArray[$i]["etablissement"] . " OR " . $name . "="; 
 				}
 			}
 
@@ -44,6 +44,9 @@
 		}
 
 		private static function fetchUrl($url, &$contents) {
+
+
+			JsManager::console_log($url);
 
 			$contents = file_get_contents($url);
 
@@ -65,11 +68,18 @@
 	            "reg_etab_lib" => "Région",
 	            "dep_ins_lib" => "Département",
 	            "com_etab_lib" => "Ville"
-	         );
+			 );
 
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($labels, $url);
+
+			if (!isset($_POST["begin"])) {
+				$databaseActions = new DatabaseActions();
+				$etablissementArray = $databaseActions->getTop3();
+				$url = self::createUrl_q($url, $etablissementArray, "etablissement");
+			}
+
 			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18";
 			self::fetchUrl($url, $contents);
 		}
@@ -133,7 +143,7 @@
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-etablissements-enseignement-superieur&rows=-1";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($labels_2, $url);
-			$url = self::createUrl_q($url, $uaiArray);
+			$url = self::createUrl_q($url, $uaiArray, "uai");
 			self::fetchUrl($url, $contents_2);
 		}
 

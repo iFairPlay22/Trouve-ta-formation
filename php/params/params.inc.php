@@ -1,6 +1,6 @@
 <?php
     $host="sqletud.u-pem.fr";
-    $user="";
-    $pwd="";
-    $db="";
+    $user="ebouquet";
+    $pwd="6Koyxeaxz6";
+    $db="ebouquet_db";
 ?>

@@ -121,6 +121,9 @@ td {
 .article-leatlet {
   height: 100px;
 }
+.category-description {
+  max-width: 30%;
+}
 /* FOOTER */
 footer {
   margin-top: 60px;

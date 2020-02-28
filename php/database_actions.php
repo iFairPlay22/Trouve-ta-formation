@@ -28,6 +28,20 @@
             return $clicks;
         } 
 
+        public function getTop3() {
+            $sql = "SELECT id FROM UserActions ORDER BY clics DESC LIMIT 3;";
+
+            $podium = array();
+            
+            foreach  ($this->_pdo->query($sql) as $row) {
+                array_push($podium, array("etablissement" => $row["id"]));
+            }
+
+            $_POST["begin"] = 0;
+            $_POST["end"] = 3;
+
+            return $podium;
+        }
 		
 	}
 ?>

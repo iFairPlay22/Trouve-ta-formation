@@ -10,9 +10,9 @@
 			
 		}
 
-		 private static function match($line, $default) {
+		 private static function match($line) {
 	        foreach ($_POST as $key => $value) {
-	           if ($key == "end" || $key == "begin" || $value == $default || $value == "")
+	           if ($key == "end" || $key == "begin" || $value == "")
 	              continue;
 	           if ($line[$key] != $value) {
 	              return false;
@@ -46,7 +46,7 @@
 	        print("<th>Fiche détaillée</th></tr>");
 	     }
 
-		public static function printResult($contents, $default, $labels, $limit) {
+		public static function printResult($contents, $labels, $limit) {
 			self::printHeader($labels);
 
 	        $parameters = array(
@@ -58,7 +58,7 @@
 	        $localisations = array();
 	        
 	        foreach ($contents["records"] as $key => $value) {
-	           if (self::match($value["fields"], $default)) {
+	           if (self::match($value["fields"])) {
 	              if ($parameters["nbResults"] < $_POST["begin"]) {
 	                $parameters["hasBefore"] = true;
 	              }

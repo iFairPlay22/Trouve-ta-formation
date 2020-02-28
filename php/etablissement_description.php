@@ -12,24 +12,32 @@
 			
 		}
 
+		private function formatValue($value) {
+			if (is_string($value) && 0 < strlen($value)) {
+				$value = strtolower($value);
+				$value[0] = strtoupper($value[0]);
+			}
+			return $value;
+		}
+
 		private function printCategories($categories, $contents) {
 			
 			foreach ($categories as $categoryName => $categoryData) {
 
 				print("<h1>" . $categoryName . "</h1>");
-				foreach ($categoryData as $attribute => $label) {JsManager::console_log($contents["records"][0]["fields"]);
+				foreach ($categoryData as $attribute => $label) {
 					
 					if (isset($contents["records"][0]["fields"][$attribute])) {
 						if ($attribute == "url" || $attribute == "element_wikidata") {
 							print("<p><a href=\"" . $contents["records"][0]["fields"][$attribute] . "\" target=\"_blank\">" . $label . "</a></p>");
 						} else if ($attribute !== "coordonnees") {
-							print("<p>" . $label . ": " . $contents["records"][0]["fields"][$attribute] . "</p>");
+							print("<p>" . $label . ": " . $this->formatValue($contents["records"][0]["fields"][$attribute]) . "</p>");
 						}
 					}
 				}
 
 				if ($this->_index % 2 == 1 && $this->_index < 5) {
-					print("</article><article>");
+					print("</article><article class=\"category-description\">");
 				}
 				$this->_index++;
 			}
@@ -40,7 +48,7 @@
 			Url::fetchUrl_1_id($categories, $contents, $id);
 			Url::fetchUrl_2_id($categories_2, $contents_2, $id);
 
-			print("<section><article>");
+			print("<section><article class=\"category-description\">");
 			$this->printCategories($categories, $contents);
 			$this->printCategories($categories_2, $contents_2);
 			print("</article></section>");

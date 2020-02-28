@@ -14,11 +14,7 @@
          foreach ($files as $file) {
             require($file);
          }
-
-         $default = "Pas de spécifications";
          $limit = 6;
-         
-         Url::fetchUrl_1($labels, $contents, -1);
       ?>
 
       <header>
@@ -39,9 +35,8 @@
                <input name="begin" value ="0" hidden>
                <input name="end" value ="<?php print($limit); ?>" hidden>
                <?php
-                  foreach ($labels as $column => $label) {
-                     Form::printForm($contents, $default, $column, $label);
-                  }
+                  Url::fetchUrl_1($labels, $contents);
+                  Form::printForm($labels, $contents)
                ?>
 
                <article class="section-article-form-article">
@@ -58,11 +53,7 @@
       </section>
          <?php
             $localisations = array();
-            if (isset($_POST["begin"])) {
-               if (isset($_POST["end"])) {
-                  $localisations = ResultTable::printResult($contents, $default, $labels, $limit);
-               }
-            } else if (isset($_POST["id"])) {
+            if (isset($_POST["id"])) {
                $databaseActions = new DatabaseActions();
                $clics = $databaseActions->addClick($_POST["id"]);
 
@@ -70,6 +61,8 @@
                $localisations = $etablissementDescription->printResult($_POST["id"]);
                
                print("<article><h1 style=\"text-align: center;\">Cette page a été consultée $clics fois !</h1></article>");
+            } else {
+               $localisations = ResultTable::printResult($contents, $labels, $limit);
             }
          ?>
       <footer>
