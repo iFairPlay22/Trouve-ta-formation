@@ -37,9 +37,6 @@
                 array_push($podium, array("etablissement" => $row["id"]));
             }
 
-            $_POST["begin"] = 0;
-            $_POST["end"] = 3;
-
             return $podium;
         }
 		

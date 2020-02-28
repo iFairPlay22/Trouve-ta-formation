@@ -14,7 +14,6 @@
          foreach ($files as $file) {
             require($file);
          }
-         $limit = 6;
       ?>
 
       <header>
@@ -32,11 +31,10 @@
                les champs optionnels ci dessous.
             </p>
             <form id="section-article-form" method="POST">
-               <input name="begin" value ="0" hidden>
-               <input name="end" value ="<?php print($limit); ?>" hidden>
+               
                <?php
-                  Url::fetchUrl_1($labels, $contents);
-                  Form::printForm($labels, $contents)
+                  $form = new Form();
+                  $form->print();
                ?>
 
                <article class="section-article-form-article">
@@ -52,18 +50,20 @@
          </article>
       </section>
          <?php
-            $localisations = array();
-            if (isset($_POST["id"])) {
+
+            if (isset($_POST["id"])) { 
                $databaseActions = new DatabaseActions();
                $clics = $databaseActions->addClick($_POST["id"]);
 
                $etablissementDescription = new EtablissementDescription();
-               $localisations = $etablissementDescription->printResult($_POST["id"]);
+               $localisations = $etablissementDescription->print();
                
                print("<article><h1 style=\"text-align: center;\">Cette page a été consultée $clics fois !</h1></article>");
             } else {
-               $localisations = ResultTable::printResult($contents, $labels, $limit);
+               $resultTable = new ResultTable();
+               $resultTable->print();
             }
+
          ?>
       <footer>
          <p class="p-padding">
@@ -92,7 +92,7 @@
          });
          
          <?php
-            Map::addMapItems($localisations);
+            Map::addMapItems();
          ?>
          
       </script>

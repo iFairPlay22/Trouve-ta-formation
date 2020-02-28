@@ -4,24 +4,24 @@
 	*/
 	class ResultTable
 	{
+		private $_labels = array();
+		private $_contents = array();
+		private $_etablissments = array();
 		
 		function __construct()
 		{
 			
 		}
 
-		 private static function match($line) {
-	        foreach ($_POST as $key => $value) {
-	           if ($key == "end" || $key == "begin" || $value == "")
-	              continue;
-	           if ($line[$key] != $value) {
-	              return false;
-	           }
-	        }
-	        return true;
-	     }
+		 private function printHeader() {
+			print("<table><tr>");
+			  foreach ($this->_labels as $column => $label) {
+				  print("<th>" . $label . "</th>");
+			  }
+			  print("<th>Fiche détaillée</th></tr>");
+		   }
 
-	     private static function printLine($line, $header) {
+	     private function printLine($line, $header) {
 	        print("<tr>");
 
 	        foreach ($header as $key => $value) {
@@ -37,67 +37,45 @@
 
 	        print("</tr>");
 	     }
-
-	    private static function printHeader($labels) {
-	      print("<article><table><tr>");
-	        foreach ($labels as $column => $label) {
-	            print("<th>" . $label . "</th>");
-	        }
-	        print("<th>Fiche détaillée</th></tr>");
-	     }
-
-		public static function printResult($contents, $labels, $limit) {
-			self::printHeader($labels);
-
-	        $parameters = array(
-	            "nbResults" => 0,
-	            "hasBefore" => false,
-	            "hasAfter" => false
-	        );
-
-	        $localisations = array();
+		 
+		private function printContents() {
 	        
-	        foreach ($contents["records"] as $key => $value) {
-	           if (self::match($value["fields"])) {
-	              if ($parameters["nbResults"] < $_POST["begin"]) {
-	                $parameters["hasBefore"] = true;
-	              }
-	              if ($_POST["begin"] <= $parameters["nbResults"] && $parameters["nbResults"] < $_POST["end"]) {
-	                self::printLine($value["fields"], $labels);
-	                array_push($localisations, array(
-	                  //"etablissement_lib" => $value["fields"]["etablissement_lib"], 
-	                  "etablissement" => $value["fields"]["etablissement"]
-	                ));
-	              }
-	              if ($_POST["end"] <= $parameters["nbResults"] && !($parameters["hasAfter"])) {
-	                $parameters["hasAfter"] = true;
-	              }
-	              $parameters["nbResults"]++;
-	           }                     
-	        }
+	        foreach ($this->_contents["records"] as $key => $value) {
+	           self::printLine($value["fields"], $this->_labels);                   
+			   array_push($this->_etablissments, array(
+				"etablissement" => $value["fields"]["etablissement"]
+			  ));
+			}
+			
 	        print("</table>");
+		}
 
-	        if ($parameters["hasBefore"] || $parameters["hasAfter"]) {
-	            print('<div style="display: flex; align-items: center; justify-content: center; margin-top: 15px;"><div style="display: flex; align-items: center; justify-content: space-around; width:30%;">');
-	            if ($parameters["hasBefore"])
-	                Button::printBeforeButton($limit);
-	            if ($parameters["hasAfter"])
-	                Button::printAfterButton($limit);
-	            print('</div></div>');
-	        }  
+		private function printMessage() {
+			$all = $this->_contents["nhits"];
+			$results = ButtonBar::$_limit < $all ? ButtonBar::$_limit : $all;
 
-	        if ($parameters["nbResults"] <= 0) {
+			$buttonBar = New ButtonBar();
+			$buttonBar->print(isset($_POST["begin"]) ? 0 < $_POST["begin"] : false, $all !== 0);
+
+			if ($all <= 0) {
 	            print('<p style="text-align: center;">Aucun résultat ne correspond à vos critères de tri.</p>');
 	        } else {
-	            $printElements = ($parameters["nbResults"] < intval($_POST["end"])) ? $parameters["nbResults"] : (intval(intval($_POST["end"])) - (intval($_POST["begin"])));
-	            print('<p style="text-align: center;">'. $printElements . " / " . $parameters["nbResults"] . " résultats affichés </p>");
+	            print('<p style="text-align: center;">'. min(array(ButtonBar::$_limit, $all)) . " / " . $all . " résultats affichés </p>");
+	            Map::addCoordinates($this->_etablissments);
+			}
+		}
 
-	            $localisations = Map::addCoordinates($localisations);
-	        }
+		public function print() {
+			URL::fetch_All_Formations_Etablissments($this->_labels, $this->_contents, true);
+
+			self::printHeader();
+			self::printContents();
+
+			print("<article>");
+
+	        self::printMessage();
 
 	        print("</article>");
-
-	        return $localisations;
      }
 	}
 ?>

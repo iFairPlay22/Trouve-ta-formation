@@ -4,13 +4,15 @@
 	*/
 	class Map
 	{
+
+		private static $_localisations = array();
 		
 		function __construct()
 		{
 			
 		}
 
-		private static function add($localisations, $new, $old) {
+		private static function add($new, $old) {
 			$res = array(
 				"x" => $new["coordonnees"][0],
 				"y" => $new["coordonnees"][1],
@@ -20,31 +22,25 @@
 			);
 
 			foreach ($old as $localisation) {
-				
 				if ($localisation["etablissement"] == $new["uai"]) {
 					$res["number"]++;
 				}   
-
 			}
 			
 			return $res;
 		}
 
-		public static function addCoordinates($localisations) {
-	        Url::fetchUrl_2($contents_2, $localisations);
+		public static function addCoordinates($etablissments) {
+	        Url::fetch_Specific_Etablissments($contents, $etablissments);
 
-	        $result = array();
-
-	        foreach ($contents_2["records"] as $localisation) {
-				array_push($result, self::add($result, $localisation["fields"], $localisations));
+	        foreach ($contents["records"] as $localisation) {
+				array_push(self::$_localisations, self::add($localisation["fields"], $etablissments));
 			}
-
-	        return $result;
 
 	     }
 
-	     public static function addMapItems($localisations) {
-      		foreach ($localisations as $localisation) {
+	     public static function addMapItems() {
+      		foreach (self::$_localisations as $localisation) {
 	        	print('L.marker([' . $localisation["x"] . ', ' . $localisation["y"] . ']).addTo(mymap).bindPopup("<center><a href=\"' . $localisation["url"] .'\" target=\"_blank\"></center>' . $localisation["uo_lib"] . " (" . $localisation["number"] . ')</a>").openPopup();');
 	       }
 	    }

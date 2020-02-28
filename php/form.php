@@ -10,7 +10,7 @@
 			
 		}
 
-		private static function printOptions($contents, $item) {
+		private function printOptions($contents, $item) {
 	        $array = array();
 	        foreach ($contents["records"] as $key => $value) {
 	           array_push($array, $value["fields"][$item]);
@@ -22,7 +22,7 @@
 	        }
 	     }
 
-		private static function printFormArticle($contents, $column, $label) {
+		private function printArticle($contents, $column, $label) {
 	        print('<article class="section-article-form-article"><input list="' . $column . '" name="' . $column . '" placeholder="' . $label. '"');
 
 	        if (isset($_POST["$column"])) {
@@ -38,10 +38,11 @@
 	        print('</datalist></article>');
 		 }
 		 
-		 public static function printForm($labels, $contents) {
+		 public function print() {
+			Url::fetch_All_Formations_Etablissments($labels, $contents, false);
 			foreach ($labels as $column => $label) {
-				self::printFormArticle($contents, $column, $label);
-			 }
+				self::printArticle($contents, $column, $label);
+			}
 		 }
 
 	}

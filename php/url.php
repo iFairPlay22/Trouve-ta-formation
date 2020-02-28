@@ -19,6 +19,21 @@
 			return $url;
 		}
 
+		private static function createUrl_refine($url) {
+
+
+
+			if (count($_POST) !== 0) {
+				foreach ($_POST as $key => $value) {
+					if ($value !== "") {
+						$url .= "&refine.$key=$value";
+					}
+				}
+			}
+			
+			return $url;
+		}
+
 		private static function createUrl_q($url, $dataArray, $name) {
 			
 			$length = count($dataArray) - 1;
@@ -45,7 +60,6 @@
 
 		private static function fetchUrl($url, &$contents) {
 
-
 			JsManager::console_log($url);
 
 			$contents = file_get_contents($url);
@@ -58,7 +72,7 @@
 			$contents = json_decode($contents, true);
 		}
 
-		public static function fetchUrl_1(&$labels, &$contents) {
+		public static function fetch_All_Formations_Etablissments(&$labels, &$contents, $with) {
 			$labels = array(
 	            "niveau_lib" => "Niveau d'études",
 	            "diplome_lib" => "Nom de formation",
@@ -70,17 +84,27 @@
 	            "com_etab_lib" => "Ville"
 			 );
 
-			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1";
+			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib";
+		
 			$url = self::addApiKey($url);
+			
 			$url = self::createUrl_facets($labels, $url);
+			
+			// if (!isset($_POST["begin"])) {
+			// 	$databaseActions = new DatabaseActions();
+			// 	$etablissementArray = $databaseActions->getTop3();
+			// 	$url = self::createUrl_q($url, $etablissementArray, "etablissement");
+			// }
 
-			if (!isset($_POST["begin"])) {
-				$databaseActions = new DatabaseActions();
-				$etablissementArray = $databaseActions->getTop3();
-				$url = self::createUrl_q($url, $etablissementArray, "etablissement");
+			if ($with === true) {
+				$url = self::createUrl_refine($url);
+				$url .= "&rows=" . ButtonBar::$_limit . "&start=" . (isset($_POST["begin"]) ? $_POST["begin"] : 0);
+			} else {
+				$url .= "&rows=-1";
 			}
 
-			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18";
+			$url .= "&facet=etablissement&refine.rentree_lib=2017-18";
+			
 			self::fetchUrl($url, $contents);
 		}
 
@@ -94,7 +118,7 @@
 			return $facets;
 		}
 
-		public static function fetchUrl_1_id(&$labels, &$contents, $id) {
+		public static function fetch_Specific_Formations_Etablissment_More_Data(&$labels, &$contents) {
 			$labels = array(
 				"L'établissement" => array(
 					"etablissement_lib" => "Nom de l'établissement",
@@ -128,11 +152,11 @@
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1&facet=etablissement";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($facets, $url);
-			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&q=" . $id;
+			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&q=" . $_POST["id"];
 			self::fetchUrl($url, $contents);
 		}
 
-		public static function fetchUrl_2(&$contents_2, $uaiArray) {
+		public static function fetch_Specific_Etablissments(&$contents_2, $uaiArray) {
 			$labels_2 = array(
 				"uai" => "Identifiant",
 				"coordonnees" => "Localisations",
@@ -141,13 +165,17 @@
 			);
 
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-etablissements-enseignement-superieur&rows=-1";
+			
 			$url = self::addApiKey($url);
+			
 			$url = self::createUrl_facets($labels_2, $url);
+			
 			$url = self::createUrl_q($url, $uaiArray, "uai");
+			
 			self::fetchUrl($url, $contents_2);
 		}
 
-		public static function fetchUrl_2_id(&$labels, &$contents, $id) {
+		public static function fetch_Specific_Etablissment_More_Data(&$labels, &$contents) {
 			$labels = array(
 				"La localisation" => array(
 					"pays_etranger_acheminement" => "Pays",
@@ -171,7 +199,7 @@
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-etablissements-enseignement-superieur&rows=-1";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($facets, $url);
-			$url = $url . "&q=" . $id;
+			$url = $url . "&q=" . $_POST["id"];
 			self::fetchUrl($url, $contents);
 		}
 	}
