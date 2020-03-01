@@ -167,7 +167,7 @@
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1&facet=etablissement";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($facets, $url);
-			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&refine.etablissement=" . $_POST["etablissment"] . "&refine.diplom=" . $_POST["diplom"];
+			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&refine.diplom=" . $_POST["diplom"] . "&q=" . $_POST["etablissment"];
 			self::fetchUrl($url, $contents);
 		}
 

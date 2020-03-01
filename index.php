@@ -3,6 +3,7 @@
    <head>
       <meta charset="utf-8">
       <title>Trouve ta formation</title>
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
          integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
          crossorigin=""/>
@@ -85,7 +86,21 @@
             }).addTo(mymap);
 
          document.getElementById("location-button").addEventListener("click", function() {
-            mymap.locate({setView: true});
+            mymap.locate({setView: true, maxZoom: 16});
+         });
+
+         mymap.on('locationfound', e => {
+            const radius = e.accuracy;
+
+            L.marker(e.latlng)
+               .addTo(mymap)
+               .bindPopup("Vous êtes situé à " + radius + " mêtres de ce point").openPopup();
+
+            L.circle(e.latlng, radius).addTo(mymap);
+         });
+
+         mymap.on('locationerror', e => {
+            swal(e.message);
          });
          
          <?php

@@ -5,6 +5,7 @@
 	class EtablissementDescription
 	{
 
+		private $_printArticle = true;
 		private $_printTitle = true;
 		
 		function __construct()
@@ -21,6 +22,11 @@
 		}
 
 		private function printTitle($name) {
+			if ($this->_printArticle) {
+				print("<article class=\"category-description\">");
+				$this->_printArticle = false;
+			}
+			
 			if ($this->_printTitle) {
 				print("<h1>" . $name . "</h1>");
 				$this->_printTitle = false;
@@ -28,11 +34,16 @@
 		}
 
 		private function printEtablissment($etablissmentCategory, $contents) {
+			print("<article id=\"etablissment-data\"><h1> Fiche établissement </h1><section><article class=\"category-description\">");
 			
 			foreach ($contents as $content) {
 
+				$length = count($etablissmentCategory) - 1;
+				$i = 0;
+
 				foreach ($etablissmentCategory as $categoryName => $categoryData) {
 					
+					$this->_printArticle = false;
 					$this->_printTitle = true;
 					
 					foreach ($categoryData as $attribute => $label) {
@@ -53,23 +64,31 @@
 							}
 						}
 					}
-					
-					print("</article><article class=\"category-description\">");
+
+					if ($this->_printTitle === false && $i < $length) {
+						print("</article><article class=\"category-description\">");
+					}
+
+					$i++;
 				}
 
 			}
+
+			$databaseActions = new DatabaseActions();
+			$clics = $databaseActions->addClick($_POST["etablissment"]);
+			print("</article></section><h2 style=\"text-align: center;\">Cette page a été consultée $clics fois !</h2></article>");
 
 		}
 
 		private function printFormations($formationCategory, $contents) {
 
-			print("<section>");
+			print("<article id=\"formation-data\"><h1> Fiche formation </h1><section>");
 
 			foreach ($contents as $content) {
 
 				foreach ($content["records"] as $value) {
 
-					print("<article class=\"category-description\">");
+					$this->_printArticle = true;
 
 					foreach ($formationCategory as $categoryName => $categoryData) {
 
@@ -87,33 +106,26 @@
 
 					}
 
-					print("</article>");
+					if ($this->_printArticle === false) {
+						print("</article>");
+					}
 
 				}
 
 			}
 
-			print("</section>");
+			print("</section></article>");
 			
 		}
 
 	     public function print() {
-			$databaseActions = new DatabaseActions();
-			$clics = $databaseActions->addClick($_POST["etablissment"]);
-
 			Url::fetch_Specific_Formations_Etablissment_More_Data($etablissment, $formation, $contents);
 			Url::fetch_Specific_Etablissment_More_Data($etablissment_2, $contents_2);
 
 			$etablissments = array_merge($etablissment, $etablissment_2);
 			$contents = array($contents, $contents_2);
 
-			print("<article><h1 style=\"text-align: center;\"> Fiche établissement </h1></article><section><article class=\"category-description\">");
 			$this->printEtablissment($etablissments, $contents);
-			print("</article></section>");
-
-			print("<article><h1 style=\"text-align: center;\">Cette page a été consultée $clics fois !</h1></article>");
-			
-			print("<article><h1 style=\"text-align: center;\">Fiche de formation </h1></article>");
 			$this->printFormations($formation, $contents);
 
 			Map::setLocalisations(
