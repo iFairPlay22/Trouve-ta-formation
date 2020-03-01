@@ -30,7 +30,8 @@
 
 	        print("<td>
 	        	<form method=\"POST\">
-	        		<input name=\"id\" value=\"" . $line["etablissement"] . "\" type=\"hidden\">
+					<input name=\"etablissment\" value=\"" . $line["etablissement"] . "\" type=\"hidden\">
+					<input name=\"diplom\" value=\"" . $line["diplom"] . "\" type=\"hidden\">
 	        		<input type=\"submit\" value=\"En savoir plus\" class=\"section-article-form-article-inputbutton\">
 	        	</form>
 	        	</td>");
@@ -51,6 +52,8 @@
 		}
 
 		private function printMessage() {
+			print("<article>");
+
 			$all = $this->_contents["nhits"];
 			$results = ButtonBar::$_limit < $all ? ButtonBar::$_limit : $all;
 
@@ -63,6 +66,8 @@
 	            print('<p style="text-align: center;">'. min(array(ButtonBar::$_limit, $all)) . " / " . $all . " résultats affichés </p>");
 	            Map::addCoordinates($this->_etablissments);
 			}
+
+			print("</article>");
 		}
 
 		public function print() {
@@ -70,12 +75,7 @@
 
 			self::printHeader();
 			self::printContents();
-
-			print("<article>");
-
 	        self::printMessage();
-
-	        print("</article>");
-     }
+     	}
 	}
 ?>

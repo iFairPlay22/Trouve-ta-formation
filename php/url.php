@@ -103,7 +103,7 @@
 				$url .= "&rows=-1";
 			}
 
-			$url .= "&facet=etablissement&refine.rentree_lib=2017-18";
+			$url .= "&facet=etablissement&facet=diplom&refine.rentree_lib=2017-18";
 			
 			self::fetchUrl($url, $contents);
 		}
@@ -118,8 +118,18 @@
 			return $facets;
 		}
 
-		public static function fetch_Specific_Formations_Etablissment_More_Data(&$labels, &$contents) {
-			$labels = array(
+		public static function fetch_Specific_Formations_Etablissment_More_Data(&$etablissment, &$formation, &$contents) {
+			
+			$etablissment = array(
+				"L'établissement" => array(
+					"etablissement_lib" => "Nom de l'établissement",
+		            "etablissement_type_lib" => "Type d'établissement",
+		            "gd_disciscipline_lib" => "Domaine d'études",
+		            "sect_disciplinaire_lib" => "Secteur d'études"
+				)
+			);
+
+			$formation = array(
 				"L'établissement" => array(
 					"etablissement_lib" => "Nom de l'établissement",
 		            "etablissement_type_lib" => "Type d'établissement",
@@ -145,14 +155,19 @@
 		            "hommes" => "Etudiants",
 		            "effectif_total" => "Effectif total"
 				)
-	         );
+			 );
+			 
+			$etablissmentObject = new ArrayObject($etablissment);
+			$formationObject = new ArrayObject($formation);
+			
+			$labels = array_merge($etablissmentObject->getArrayCopy(), $formationObject->getArrayCopy());
 
 			$facets = self::getFacetsArray($labels);
 
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-diplomes-et-formations-prepares-etablissements-publics&sort=-rentree_lib&rows=-1&facet=etablissement";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($facets, $url);
-			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&q=" . $_POST["id"];
+			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&refine.etablissement=" . $_POST["etablissment"] . "&refine.diplom=" . $_POST["diplom"];
 			self::fetchUrl($url, $contents);
 		}
 
@@ -175,8 +190,8 @@
 			self::fetchUrl($url, $contents_2);
 		}
 
-		public static function fetch_Specific_Etablissment_More_Data(&$labels, &$contents) {
-			$labels = array(
+		public static function fetch_Specific_Etablissment_More_Data(&$etablissment, &$contents) {
+			$etablissment = array(
 				"La localisation" => array(
 					"pays_etranger_acheminement" => "Pays",
 					"reg_nom" => "Région",
@@ -194,12 +209,12 @@
 				)
 	        );
 
-			$facets = self::getFacetsArray($labels);
+			$facets = self::getFacetsArray($etablissment);
 
 			$url = "https://data.enseignementsup-recherche.gouv.fr/api/records/1.0/search/?dataset=fr-esr-principaux-etablissements-enseignement-superieur&rows=-1";
 			$url = self::addApiKey($url);
 			$url = self::createUrl_facets($facets, $url);
-			$url = $url . "&q=" . $_POST["id"];
+			$url = $url . "&q=" . $_POST["etablissment"];
 			self::fetchUrl($url, $contents);
 		}
 	}

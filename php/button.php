@@ -17,7 +17,7 @@
 	        print('<form method="POST">');
 	        foreach ($_POST as $key => $value) {
 	           if ($key === "begin") {
-	              print('<input name="' . $key . '" value="' . ((integer) $value - self::$_limit) . '" type="hidden"/>');
+	              print('<input name="' . $key . '" value="' . min(array($value - self::$_limit, 0)) . '" type="hidden"/>');
 				  $begin = true;
 	           } else {
 	              print('<input name="' . $key . '" value="' . $value . '" type="hidden"/>');
@@ -34,7 +34,7 @@
 	        print('<form method="POST">');
 	        foreach ($_POST as $key => $value) {
 	           if ($key === "begin") {
-				  print('<input name="' . $key . '" value="' . ((integer) $value + self::$_limit) . '" type="hidden"/>');
+				  print('<input name="' . $key . '" value="' . min(array($value + self::$_limit, 0)) . '" type="hidden"/>');
 				  $begin = true;
 	           } else {
 	              print('<input name="' . $key . '" value="' . $value . '" type="hidden"/>');

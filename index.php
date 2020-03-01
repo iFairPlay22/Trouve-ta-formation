@@ -17,11 +17,11 @@
       ?>
 
       <header>
-         <h1 id="header-title">
+         <h2 id="header-title">
             Trouver sa formation
-         </h1>
+         </h2>
       </header>
-      <section>
+      <section id="section-form">
          <article class="flex-article">
             <h2 id="section-article-title">
                Formulaire
@@ -42,23 +42,20 @@
                </article>
             </form>
          </article>
-         <article id="article-map">
+         <div id="article-map">
             <div id="article-leatlet"></div>
             <button id="location-button">
                Géolocaliser
             </button>
-         </article>
+         </div>
       </section>
          <?php
 
-            if (isset($_POST["id"])) { 
-               $databaseActions = new DatabaseActions();
-               $clics = $databaseActions->addClick($_POST["id"]);
-
-               $etablissementDescription = new EtablissementDescription();
-               $localisations = $etablissementDescription->print();
-               
-               print("<article><h1 style=\"text-align: center;\">Cette page a été consultée $clics fois !</h1></article>");
+            if (isset($_POST["etablissment"])) { 
+               if (isset($_POST["diplom"])) {
+                  $etablissementDescription = new EtablissementDescription();
+                  $etablissementDescription->print();
+               }
             } else {
                $resultTable = new ResultTable();
                $resultTable->print();

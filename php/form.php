@@ -23,7 +23,7 @@
 	     }
 
 		private function printArticle($contents, $column, $label) {
-	        print('<article class="section-article-form-article"><input list="' . $column . '" name="' . $column . '" placeholder="' . $label. '"');
+	        print('<div class="section-article-form-article"><input list="' . $column . '" name="' . $column . '" placeholder="' . $label. '"');
 
 	        if (isset($_POST["$column"])) {
 	           if ($_POST["$column"] !== "") {
@@ -35,7 +35,7 @@
 
 	        self::printOptions($contents, $column);
 
-	        print('</datalist></article>');
+	        print('</datalist></div>');
 		 }
 		 
 		 public function print() {

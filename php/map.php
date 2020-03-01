@@ -43,6 +43,10 @@
       		foreach (self::$_localisations as $localisation) {
 	        	print('L.marker([' . $localisation["x"] . ', ' . $localisation["y"] . ']).addTo(mymap).bindPopup("<center><a href=\"' . $localisation["url"] .'\" target=\"_blank\"></center>' . $localisation["uo_lib"] . " (" . $localisation["number"] . ')</a>").openPopup();');
 	       }
-	    }
+		}
+		
+		public static function setLocalisations($localisations) {
+			self::$_localisations = $localisations;
+		}
 	}
 ?>

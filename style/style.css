@@ -34,12 +34,14 @@ header {
 }
 /* SECTION */
 section {
-  margin-top: 10%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
+}
+#section-form {
+  margin-top: 200px;
 }
 #section-article-title {
   margin: 0;
@@ -59,7 +61,8 @@ section {
   padding-bottom: 15px;
 }
 
-article {
+article,
+#article-map {
   margin-bottom: 25px;
 }
 article > select {
