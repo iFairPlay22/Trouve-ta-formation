@@ -11,7 +11,7 @@
    </head>
    <body>
       <?php
-         $files = array("php/button.php", "php/form.php", "php/js_manager.php", "php/map.php", "php/result_table.php", "php/url.php", "php/etablissement_description.php", "php/database_actions.php");
+         $files = array("php/button.php", "php/form.php", "php/js_manager.php", "php/map.php", "php/result_table.php", "php/url.php", "php/etablissement_description.php", "php/database_actions.php", "php/util.php");
          foreach ($files as $file) {
             require($file);
          }
@@ -38,6 +38,8 @@
                   $form->print();
                ?>
 
+               <input name="search" value="true" type="hidden">
+
                <article class="section-article-form-article">
                   <input type="submit" value="Rechercher" class="section-article-form-article-inputbutton"/>
                </article>
@@ -58,7 +60,7 @@
                   $etablissementDescription->print();
                }
             } else {
-               $resultTable = new ResultTable();
+               $resultTable = new ResultTable(!isset($_POST["search"]));
                $resultTable->print();
             }
 
@@ -90,13 +92,12 @@
          });
 
          mymap.on('locationfound', e => {
-            const radius = e.accuracy;
 
             L.marker(e.latlng)
                .addTo(mymap)
-               .bindPopup("Vous êtes situé à " + radius + " mêtres de ce point").openPopup();
+               .bindPopup("Vous êtes ici !").openPopup();
 
-            L.circle(e.latlng, radius).addTo(mymap);
+            L.circle(e.latlng, e.accuracy).addTo(mymap);
          });
 
          mymap.on('locationerror', e => {

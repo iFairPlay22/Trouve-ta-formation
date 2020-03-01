@@ -89,12 +89,6 @@
 			$url = self::addApiKey($url);
 			
 			$url = self::createUrl_facets($labels, $url);
-			
-			// if (!isset($_POST["begin"])) {
-			// 	$databaseActions = new DatabaseActions();
-			// 	$etablissementArray = $databaseActions->getTop3();
-			// 	$url = self::createUrl_q($url, $etablissementArray, "etablissement");
-			// }
 
 			if ($with === true) {
 				$url = self::createUrl_refine($url);
@@ -169,6 +163,20 @@
 			$url = self::createUrl_facets($facets, $url);
 			$url = $url . "&facet=etablissement&refine.rentree_lib=2017-18&refine.diplom=" . $_POST["diplom"] . "&q=" . $_POST["etablissment"];
 			self::fetchUrl($url, $contents);
+		}
+
+		public static function fetch_Top3_Etablissments(&$labels, &$contents) {
+			$labels = array(
+				"uo_lib" => "Nom de l'établissement",
+				"type_d_etablissement" => "Type d'établissement",
+				"reg_nom" => "Région",
+				"com_nom" => "Commune",
+				"adresse_uai" => "Addresse"
+			);
+
+			$databaseActions = new DatabaseActions();
+			$etablissementArray = $databaseActions->getTop3();
+			self::fetch_Specific_Etablissments($contents, $etablissementArray);
 		}
 
 		public static function fetch_Specific_Etablissments(&$contents_2, $uaiArray) {

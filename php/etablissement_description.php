@@ -13,14 +13,6 @@
 			
 		}
 
-		private function formatValue($value) {
-			if (is_string($value) && 0 < strlen($value)) {
-				$value = strtolower($value);
-				$value[0] = strtoupper($value[0]);
-			}
-			return $value;
-		}
-
 		private function printTitle($name) {
 			if ($this->_printArticle) {
 				print("<article class=\"category-description\">");
@@ -60,7 +52,7 @@
 								}
 							} else if ($attribute !== "coordonnees") {
 								$this->printTitle($categoryName);
-								print("<p>" . $label . ": " . $this->formatValue($value["fields"][$attribute]) . "</p>");
+								print("<p>" . $label . ": " . Util::formatValue($value["fields"][$attribute]) . "</p>");
 							}
 						}
 					}
@@ -99,7 +91,7 @@
 							if (isset($value["fields"][$attribute])) {
 								if ($attribute !== "coordonnees") {
 									$this->printTitle($categoryName);
-									print("<p>" . $label . ": " . $this->formatValue($value["fields"][$attribute]) . "</p>");
+									print("<p>" . $label . ": " . Util::formatValue($value["fields"][$attribute]) . "</p>");
 								}
 							}
 						}
@@ -128,17 +120,8 @@
 			$this->printEtablissment($etablissments, $contents);
 			$this->printFormations($formation, $contents);
 
-			Map::setLocalisations(
-				array(
-					array(
-						"x" => $contents_2["records"][0]["fields"]["coordonnees"][0],
-						"y" => $contents_2["records"][0]["fields"]["coordonnees"][1],
-						"number" => 1,
-						"uo_lib" => $contents_2["records"][0]["fields"]["uo_lib"],
-						"url" => $contents_2["records"][0]["fields"]["url"]
-						)
-					)
-				);
+			$value = $contents_2["records"][0]["fields"];
+			Map::addLocalisation($value["coordonnees"], 1, $value["uo_lib"], $value["url"]);
 	     }
 	}
 ?>

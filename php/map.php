@@ -13,28 +13,22 @@
 		}
 
 		private static function add($new, $old) {
-			$res = array(
-				"x" => $new["coordonnees"][0],
-				"y" => $new["coordonnees"][1],
-				"number" => 0,
-				"uo_lib" => $new["uo_lib"],
-				"url" => $new["url"]
-			);
+			$number = 0;
 
 			foreach ($old as $localisation) {
 				if ($localisation["etablissement"] == $new["uai"]) {
-					$res["number"]++;
+					$number++;
 				}   
 			}
 			
-			return $res;
+			self::addLocalisation($new["coordonnees"], $number, $new["uo_lib"], $new["url"]);
 		}
 
 		public static function addCoordinates($etablissments) {
 	        Url::fetch_Specific_Etablissments($contents, $etablissments);
 
 	        foreach ($contents["records"] as $localisation) {
-				array_push(self::$_localisations, self::add($localisation["fields"], $etablissments));
+				self::add($localisation["fields"], $etablissments);
 			}
 
 	     }
@@ -45,8 +39,14 @@
 	       }
 		}
 		
-		public static function setLocalisations($localisations) {
-			self::$_localisations = $localisations;
+		public static function addLocalisation($coords, $number, $uoLib, $url) {
+			array_push(self::$_localisations, array(
+				"x" => $coords[0],
+				"y" => $coords[1],
+				"number" => $number,
+				"uo_lib" => $uoLib,
+				"url" => $url
+			));
 		}
 	}
 ?>

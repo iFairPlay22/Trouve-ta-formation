@@ -129,6 +129,11 @@ td {
 }
 .category-description {
   max-width: 30%;
+  min-width: 200px;
+}
+#formation-data,
+#etablissment-data {
+  flex-wrap: wrap;
 }
 #formation-data > h1,
 #etablissment-data > h1 {
